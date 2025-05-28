@@ -61,6 +61,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="product"
+        options={{
+        href: null, // neće se prikazivati u tab navigaciji
+        }}
+      />
     </Tabs>
   );
 }
