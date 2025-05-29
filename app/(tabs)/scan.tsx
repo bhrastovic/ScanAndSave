@@ -1,6 +1,7 @@
+import { useFocusEffect } from '@react-navigation/native'; // <== novi uvoz
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Image,
   Keyboard,
@@ -12,7 +13,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  TouchableWithoutFeedback,
+  View
 } from 'react-native';
 
 export default function ScanScreen() {
@@ -23,6 +25,13 @@ export default function ScanScreen() {
   const [manualModalVisible, setManualModalVisible] = useState(false);
 
   const router = useRouter();
+
+  // ✅ Resetira skeniranje svaki put kada korisnik uđe na ovaj ekran
+  useFocusEffect(
+    useCallback(() => {
+      setHasScanned(false);
+    }, [])
+  );
 
   const handleNavigate = () => {
     setHasScanned(true);
@@ -35,12 +44,10 @@ export default function ScanScreen() {
     }
   };
 
-  const handleManualSubmit = () => {
-    Keyboard.dismiss();
-    if (manualInput.length === 13) {
+  const handleManualChange = (text: string) => {
+    setManualInput(text);
+    if (text.length === 13) {
       handleNavigate();
-    } else {
-      alert('Barkod mora imati 13 znamenki');
     }
   };
 
@@ -60,38 +67,14 @@ export default function ScanScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Skeniranje</Text>
-        <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
-          <Image
-            source={require('@/assets/images/info-icon.png')}
-            style={styles.icon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Camera */}
-      <View style={styles.scannerContainer}>
-        <CameraView
-          style={StyleSheet.absoluteFillObject}
-          facing="back"
-          barcodeScannerSettings={{
-            barcodeTypes: ['ean13'],
-          }}
-          onBarcodeScanned={hasScanned ? undefined : handleBarCodeScanned}
-        />
-      </View>
-
-      {/* Manual Entry */}
-      <View style={styles.manualEntryContainer}>
+        {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.titleSmall}>Ručni unos</Text>
-          <TouchableOpacity onPress={() => setManualModalVisible(true)} style={styles.iconButton}>
+          <Text style={styles.title}>Skeniranje</Text>
+          <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
             <Image
               source={require('@/assets/images/info-icon.png')}
               style={styles.icon}
@@ -100,42 +83,65 @@ export default function ScanScreen() {
           </TouchableOpacity>
         </View>
 
-        <TextInput
-          placeholder="Unesi barkod"
-          placeholderTextColor="#666"
-          keyboardType="numeric"
-          maxLength={13}
-          value={manualInput}
-          onChangeText={setManualInput}
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleManualSubmit} style={styles.submitButton}>
-          <Text style={styles.submitText}>Potvrdi</Text>
-        </TouchableOpacity>
-        <Text style={styles.note}>Barkod mora sadržavati 13 znamenki</Text>
-      </View>
+        {/* Camera */}
+        <View style={styles.scannerContainer}>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ['ean13'] }}
+            onBarcodeScanned={hasScanned ? undefined : handleBarCodeScanned}
+          />
+        </View>
 
-      {/* Info Modal */}
-      <Modal transparent visible={infoModalVisible} animationType="fade">
-        <Pressable style={styles.modalOverlay} onPress={() => setInfoModalVisible(false)}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Ovdje možeš skenirati barkod proizvoda koristeći kameru.
-            </Text>
+        {/* Manual Entry */}
+        <View style={styles.manualEntryContainer}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Ručni unos</Text>
+            <TouchableOpacity onPress={() => setManualModalVisible(true)} style={styles.iconButton}>
+              <Image
+                source={require('@/assets/images/info-icon.png')}
+                style={styles.icon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
           </View>
-        </Pressable>
-      </Modal>
 
-      <Modal transparent visible={manualModalVisible} animationType="fade">
-        <Pressable style={styles.modalOverlay} onPress={() => setManualModalVisible(false)}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Ako ne možeš skenirati, unesi barkod ručno u polje ispod.
-            </Text>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              placeholder="Unesi barkod"
+              placeholderTextColor="#666"
+              keyboardType="numeric"
+              maxLength={13}
+              value={manualInput}
+              onChangeText={handleManualChange}
+              style={styles.input}
+            />
+            <Text style={styles.note}>Barkod mora sadržavati 13 znamenki</Text>
           </View>
-        </Pressable>
-      </Modal>
-    </SafeAreaView>
+        </View>
+
+        {/* Info Modal */}
+        <Modal transparent visible={infoModalVisible} animationType="fade">
+          <Pressable style={styles.modalOverlay} onPress={() => setInfoModalVisible(false)}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Ovdje možeš skenirati barkod proizvoda koristeći kameru.
+              </Text>
+            </View>
+          </Pressable>
+        </Modal>
+
+        <Modal transparent visible={manualModalVisible} animationType="fade">
+          <Pressable style={styles.modalOverlay} onPress={() => setManualModalVisible(false)}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>
+                Ako ne možeš skenirati, unesi barkod ručno u polje ispod.
+              </Text>
+            </View>
+          </Pressable>
+        </Modal>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -157,12 +163,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#000000',
   },
-  titleSmall: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
   iconButton: {
     padding: 8,
   },
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   scannerContainer: {
-    height: 250,
+    height: 300,
     margin: 20,
     borderRadius: 10,
     borderWidth: 1,
@@ -180,6 +180,8 @@ const styles = StyleSheet.create({
   },
   manualEntryContainer: {
     marginTop: 20,
+  },
+  inputWrapper: {
     paddingHorizontal: 20,
   },
   input: {
@@ -190,17 +192,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginTop: 10,
     color: '#000',
-  },
-  submitButton: {
-    backgroundColor: '#000',
-    paddingVertical: 10,
-    borderRadius: 8,
-    marginTop: 10,
-  },
-  submitText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
   },
   note: {
     fontSize: 12,
