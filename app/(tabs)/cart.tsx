@@ -66,6 +66,7 @@ export default function CartScreen() {
       products: [
         { id: '1', name: 'Kinder Bueno', price: 1.99 },
         { id: '2', name: 'Milka Oreo', price: 2.5 },
+        { id: '3', name: 'Livanjski sir', price: 5.6 },
       ],
     },
     {
@@ -131,14 +132,14 @@ export default function CartScreen() {
                           <View style={styles.quantityControls}>
                             <TouchableOpacity onPress={() => decrementQuantity(product.id)}>
                               <Image
-                                source={require('@/assets/images/iconMinus.png')}
+                                source={require('@/assets/images/minus-circle.png')}
                                 style={styles.iconButton}
                               />
                             </TouchableOpacity>
                             <Text style={styles.quantityText}>{quantity}</Text>
                             <TouchableOpacity onPress={() => incrementQuantity(product.id)}>
                               <Image
-                                source={require('@/assets/images/iconPlus.png')}
+                                source={require('@/assets/images/plus-circle.png')}
                                 style={styles.iconButton}
                               />
                             </TouchableOpacity>
@@ -152,9 +153,11 @@ export default function CartScreen() {
                 </View>
               )}
 
-              <TouchableOpacity onPress={() => toggleExpand(store.store)} style={styles.expandButtonBottom}>
+              <TouchableOpacity 
+                onPress={() => toggleExpand(store.store)} 
+                style={styles.expandButtonBottom}>
                 <Image
-                  source={require('@/assets/images/iconExpand.png')}
+                  source={require('@/assets/images/menu.png')}
                   style={styles.expandIcon}
                 />
               </TouchableOpacity>
@@ -236,7 +239,9 @@ const styles = StyleSheet.create({
     marginLeft: -12,
     backgroundColor: '#fff',
     padding: 4,
-    borderRadius: 12,
+    borderRadius: 20,
+    zIndex: 10,
+    transform: [{ translateX: -12 }, { translateY: 12 }],
   },
   expandIcon: {
     width: 24,
