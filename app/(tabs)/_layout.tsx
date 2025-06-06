@@ -1,70 +1,104 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
-
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Image, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            position: 'absolute',
-          },
-          default: {},
-        }),
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: 10, // 👈 Blago podignuto
+          height: 70,
+          borderTopWidth: 0,
+          backgroundColor: '#fff',
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: '',
+          tabBarIcon: () => (
+            <Image
+              source={require('@/assets/images/homeNavIcon.png')}
+              style={{ width: 24, height: 24 }}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Search',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="magnifyingglass" color={color} />,
+          title: '',
+          tabBarIcon: () => (
+            <Image
+              source={require('@/assets/images/searchNavIcon.png')}
+              style={{ width: 24, height: 24 }}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: 'Scan',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="barcode.viewfinder" color={color} />,
+          title: '',
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...(props as TouchableOpacityProps)}
+              style={{
+                top: -30,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'white',
+                borderRadius: 40,
+                width: 70,
+                height: 70,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 6,
+                elevation: 10,
+              }}
+            >
+              <Image
+                source={require('@/assets/images/mainScanIcon.png')}
+                style={{ width: 40, height: 40 }}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          title: '',
+          tabBarIcon: () => (
+            <Image
+              source={require('@/assets/images/profileNavIcon.png')}
+              style={{ width: 24, height: 24 }}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
-          title: 'Cart',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="heart.fill" color={color} />,
+          title: '',
+          tabBarIcon: () => (
+            <Image
+              source={require('@/assets/images/cartNavIcon.png')}
+              style={{ width: 24, height: 24 }}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="product"
         options={{
-        href: null, // neće se prikazivati u tab navigaciji
+          href: null,
         }}
       />
     </Tabs>
