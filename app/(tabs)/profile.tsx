@@ -1,6 +1,6 @@
   import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -23,6 +23,7 @@ export default function ProfileScreen() {
   const [editMode, setEditMode] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempEmail, setTempEmail] = useState(email);
+  const router = useRouter();
 
 const openImageOptions = () => {
   const options: Array<{
@@ -136,17 +137,17 @@ const openImageOptions = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.option}>
-          <Image
-            source={require('@/assets/images/iconHeart.png')}
-            style={styles.optionIcon}
-          />
-          <Text style={styles.optionText}>Omiljeni proizvodi</Text>
-          <Image
-            source={require('@/assets/images/iconArrowRight.png')}
-            style={styles.arrow}
-          />
-        </View>
+        <TouchableOpacity style={styles.option} onPress={() => router.push('/omiljeni')}>
+        <Image
+         source={require('@/assets/images/iconHeart.png')} 
+         style={styles.optionIcon}
+        />
+       <Text style={styles.optionText}>Omiljeni proizvodi</Text>
+       <Image
+    source={require('@/assets/images/iconArrowRight.png')} 
+    style={styles.arrow}
+  />
+</TouchableOpacity>
 
         <Link href="/settings" asChild>
   <TouchableOpacity style={styles.option}>
