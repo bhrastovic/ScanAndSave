@@ -1,3 +1,4 @@
+import InfoIcon from '@/assets/images/info-icon.svg';
 import { useState } from 'react';
 import {
   Alert,
@@ -94,16 +95,14 @@ export default function CartScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.headerRow}>
-        <Text style={styles.header}>Košarica</Text>
-        <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
-          <Image
-            source={require('@/assets/images/info-icon.png')}
-            style={styles.infoIcon}
-            resizeMode="contain"
-          />
+      {/* HEADER */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Košarica</Text>
+        <TouchableOpacity onPress={() => setInfoModalVisible(true)}>
+          <InfoIcon width={35} height={35} />
         </TouchableOpacity>
       </View>
+
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {filteredCartData.map((store) => {
           const isExpanded = expandedStores.includes(store.store);
@@ -185,16 +184,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
   },
-  headerRow: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 20,
+    paddingTop: 25,
+    paddingBottom: 10,
+    marginBottom: 20, // dodano
   },
-  header: {
-    fontSize: 24,
+  title: {
+    flex: 1,
+    fontSize: 30,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#000000',
   },
   scrollContainer: {
     paddingBottom: 30,
@@ -289,10 +290,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
     color: '#000',
-  },
-  infoIcon: {
-    width: 22,
-    height: 22,
   },
   modalOverlay: {
     flex: 1,

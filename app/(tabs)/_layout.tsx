@@ -1,13 +1,16 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { View } from 'react-native';
 
 // SVG ikone
 import NavIconCart from '@/assets/images/navIconCart.svg';
+import NavIconCartActive from '@/assets/images/navIconCartActive.svg';
 import NavIconHome from '@/assets/images/navIconHome.svg';
 import NavIconProfile from '@/assets/images/navIconProfile.svg';
+import NavIconProfileActive from '@/assets/images/navIconProfileActive.svg';
 import NavIconScan from '@/assets/images/navIconScan.svg';
 import NavIconSearch from '@/assets/images/navIconSearch.svg';
+import NavIconSearchActive from '@/assets/images/navIconSearchActive.svg';
 
 export default function TabLayout() {
   return (
@@ -17,7 +20,7 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 10,
+          bottom: 20,
           height: 70,
           borderTopWidth: 0,
           backgroundColor: '#fff',
@@ -28,40 +31,46 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '',
-          tabBarIcon: () => <NavIconHome width={24} height={24} />, 
+          tabBarIcon: () => (
+            <View style={{ marginLeft: 12 }}>
+              <NavIconHome width={28} height={28} />
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: '',
-          tabBarIcon: () => <NavIconSearch width={24} height={24} />, 
+          tabBarIcon: ({ focused }) => (
+            <View style={{ marginLeft: -12 }}>
+              {focused ? (
+                <NavIconSearchActive width={28} height={28} />
+              ) : (
+                <NavIconSearch width={28} height={28} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
           title: '',
-          tabBarButton: (props) => (
-            <TouchableOpacity
-              {...(props as TouchableOpacityProps)}
+          tabBarIcon: () => (
+            <View
               style={{
-                top: -30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'white',
-                borderRadius: 40,
-                width: 70,
-                height: 70,
                 shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.2,
-                shadowRadius: 6,
-                elevation: 10,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.15,
+                shadowRadius: 4,
+                elevation: 5,
+                backgroundColor: 'transparent',
+                borderRadius: 75,
               }}
             >
-              <NavIconScan width={40} height={40} />
-            </TouchableOpacity>
+              <NavIconScan width={150} height={150} />
+            </View>
           ),
         }}
       />
@@ -69,14 +78,30 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: '',
-          tabBarIcon: () => <NavIconProfile width={24} height={24} />, 
+          tabBarIcon: ({ focused }) => (
+            <View style={{ marginLeft: 12 }}>
+              {focused ? (
+                <NavIconProfileActive width={28} height={28} />
+              ) : (
+                <NavIconProfile width={28} height={28} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
           title: '',
-          tabBarIcon: () => <NavIconCart width={24} height={24} />, 
+          tabBarIcon: ({ focused }) => (
+            <View style={{ marginLeft: -12 }}>
+              {focused ? (
+                <NavIconCartActive width={28} height={28} />
+              ) : (
+                <NavIconCart width={28} height={28} />
+              )}
+            </View>
+          ),
         }}
       />
       <Tabs.Screen

@@ -1,9 +1,8 @@
-import { useFocusEffect } from '@react-navigation/native'; // <== novi uvoz
+import { useFocusEffect } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useRef, useState } from 'react';
 import {
-  Image,
   Keyboard,
   Modal,
   Pressable,
@@ -14,8 +13,11 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from 'react-native';
+
+// SVG ikona
+import InfoIcon from '@/assets/images/info-icon.svg';
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -23,14 +25,28 @@ export default function ScanScreen() {
   const [manualInput, setManualInput] = useState('');
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [manualModalVisible, setManualModalVisible] = useState(false);
+  const [inputEnabled, setInputEnabled] = useState(true);
 
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const inputRef = useRef<TextInput>(null);
 
-  // ✅ Resetira skeniranje svaki put kada korisnik uđe na ovaj ekran
   useFocusEffect(
     useCallback(() => {
-      setHasScanned(false);
-    }, [])
+      if (params.clearManualInput === 'true') {
+        setInputEnabled(false); // blokiraj input
+        setManualInput('');
+        setHasScanned(false);
+
+        setTimeout(() => {
+          Keyboard.dismiss();
+          inputRef.current?.blur();
+          setInputEnabled(true); // vrati input nakon što je fokus maknut
+        }, 300);
+      } else {
+        setHasScanned(false);
+      }
+    }, [params.clearManualInput])
   );
 
   const handleNavigate = () => {
@@ -74,12 +90,8 @@ export default function ScanScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Skeniranje</Text>
-          <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
-            <Image
-              source={require('@/assets/images/info-icon.png')}
-              style={styles.icon}
-              resizeMode="contain"
-            />
+          <TouchableOpacity onPress={() => setInfoModalVisible(true)}>
+            <InfoIcon width={35} height={35} />
           </TouchableOpacity>
         </View>
 
@@ -97,17 +109,15 @@ export default function ScanScreen() {
         <View style={styles.manualEntryContainer}>
           <View style={styles.header}>
             <Text style={styles.title}>Ručni unos</Text>
-            <TouchableOpacity onPress={() => setManualModalVisible(true)} style={styles.iconButton}>
-              <Image
-                source={require('@/assets/images/info-icon.png')}
-                style={styles.icon}
-                resizeMode="contain"
-              />
+            <TouchableOpacity onPress={() => setManualModalVisible(true)}>
+              <InfoIcon width={35} height={35} />
             </TouchableOpacity>
           </View>
 
           <View style={styles.inputWrapper}>
             <TextInput
+              ref={inputRef}
+              editable={inputEnabled}
               placeholder="Unesi barkod"
               placeholderTextColor="#666"
               keyboardType="numeric"
@@ -120,7 +130,7 @@ export default function ScanScreen() {
           </View>
         </View>
 
-        {/* Info Modal */}
+        {/* Info Modals */}
         <Modal transparent visible={infoModalVisible} animationType="fade">
           <Pressable style={styles.modalOverlay} onPress={() => setInfoModalVisible(false)}>
             <View style={styles.modalView}>
@@ -155,20 +165,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 25,
     paddingHorizontal: 20,
-    backgroundColor: '#FFFFFF',
   },
   title: {
     flex: 1,
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#000000',
-  },
-  iconButton: {
-    padding: 8,
-  },
-  icon: {
-    width: 20,
-    height: 20,
   },
   scannerContainer: {
     height: 300,
@@ -209,15 +211,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginHorizontal: 40,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalText: {
     fontSize: 16,
     color: '#000',
+    textAlign: 'center',
   },
   centered: {
     flex: 1,

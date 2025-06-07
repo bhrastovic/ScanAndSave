@@ -1,10 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActionSheetIOS,
   Alert,
-  Image,
   Modal,
   Platform,
   Pressable,
@@ -15,6 +13,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+// SVG ikone
+import BackIcon from '@/assets/images/backIcon.svg';
+import InfoIcon from '@/assets/images/info-icon.svg';
+import SortIcon from '@/assets/images/sortIcon.svg';
 
 export default function ProductScreen() {
   const router = useRouter();
@@ -90,21 +93,24 @@ export default function ProductScreen() {
 
   return (
     <ScrollView style={{ backgroundColor: '#fff' }} contentContainerStyle={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/scan')} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-        <Text style={styles.backText}>Natrag</Text>
+      <TouchableOpacity
+        onPress={() => router.push({ pathname: '/scan', params: { clearManualInput: 'true' } })}
+        style={styles.backButton}
+      >
+        <BackIcon width={35} height={35} />
+        <Text style={styles.backText}>POVRATAK</Text>
       </TouchableOpacity>
 
       <View style={styles.productSection}>
         <View style={styles.imagePlaceholder} />
         <View style={styles.productInfo}>
           <Text style={styles.productName}>IME PROIZVODA</Text>
-          <Text style={styles.productDetail}>Gramaža</Text>
-          <Text style={styles.productDetail}>Proizvođač</Text>
-          <Text style={styles.productDetail}>Barkod</Text>
+          <Text style={styles.productDetail}>Gramaža:</Text>
+          <Text style={styles.productDetail}>Proizvođač:</Text>
+          <Text style={styles.productDetail}>Barkod:</Text>
         </View>
         <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
-          <Image source={require('@/assets/images/info-icon.png')} style={styles.icon} resizeMode="contain" />
+          <InfoIcon width={35} height={35} />
         </TouchableOpacity>
       </View>
 
@@ -112,10 +118,10 @@ export default function ProductScreen() {
         <Text style={styles.listTitle}>Popis trgovina</Text>
         <View style={styles.listIcons}>
           <TouchableOpacity onPress={handleSort} style={styles.iconButton}>
-            <Ionicons name="swap-vertical" size={20} color="orange" />
+            <SortIcon width={35} height={35} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setShopModalVisible(true)} style={styles.iconButton}>
-            <Image source={require('@/assets/images/info-icon.png')} style={styles.icon} resizeMode="contain" />
+            <InfoIcon width={35} height={35} />
           </TouchableOpacity>
         </View>
       </View>
@@ -160,7 +166,9 @@ export default function ProductScreen() {
         <Pressable style={styles.modalOverlay} onPress={() => setShopModalVisible(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
-              Cijene prikazuju trenutnu i najnižu zabilježenu cijenu po trgovini.
+              Cijene prikazuju trenutnu i najnižu zabilježenu cijenu po trgovini.{"\n\n"}
+              Klikom na lijevu sort ikonu možete sortirati trgovine po cijeni ili abecedno. {"\n\n"}
+              Klikom na plus ikonu dodajete proizvod u svoju košaricu.
             </Text>
           </View>
         </Pressable>
@@ -183,7 +191,7 @@ const styles = StyleSheet.create({
   backText: {
     marginLeft: 8,
     fontSize: 16,
-    color: 'black',
+    color: '#000',
   },
   productSection: {
     flexDirection: 'row',
@@ -212,12 +220,7 @@ const styles = StyleSheet.create({
     color: '#444',
   },
   iconButton: {
-    padding: 5,
     marginLeft: 6,
-  },
-  icon: {
-    width: 20,
-    height: 20,
   },
   listHeader: {
     flexDirection: 'row',
@@ -238,8 +241,8 @@ const styles = StyleSheet.create({
   shopItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    borderWidth: 2,
+    borderColor: '#000',
     padding: 12,
     borderRadius: 8,
     marginBottom: 10,
@@ -255,6 +258,8 @@ const styles = StyleSheet.create({
   priceBlockLeftAligned: {
     flex: 2,
     justifyContent: 'center',
+    borderRadius: 6,
+    padding: 8,
   },
   priceRowInline: {
     flexDirection: 'row',
@@ -283,14 +288,14 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#888',
+    borderWidth: 2,
+    borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
   },
   plus: {
     fontSize: 20,
-    color: '#888',
+    color: '#000',
     lineHeight: 22,
   },
   modalOverlay: {
@@ -304,9 +309,12 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginHorizontal: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalText: {
     fontSize: 16,
     color: '#000',
+    textAlign: 'center',
   },
 });

@@ -1,20 +1,25 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   FlatList,
-  Image,
   Keyboard,
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
+// SVG komponente
+import IconDelete from '@/assets/images/iconDelete.svg';
+import IconSearchGrey from '@/assets/images/iconSearchGrey.svg';
+import IconTrash from '@/assets/images/iconTrash.svg';
+import InfoIcon from '@/assets/images/info-icon.svg';
 
 const allProducts = [
   { id: '1', name: 'Kinder jaje' },
@@ -26,11 +31,15 @@ const allProducts = [
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [recentSearches, setRecentSearches] = useState(['Jaja', 'Kinder bueno', 'Livanjski sir', 'Pršut']);
+  const [recentSearches, setRecentSearches] = useState([
+    'Jaja',
+    'Kinder bueno',
+    'Livanjski sir',
+    'Pršut',
+  ]);
   const [results, setResults] = useState<typeof allProducts>([]);
   const [searched, setSearched] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -39,11 +48,10 @@ export default function SearchScreen() {
       setSearched(false);
       return;
     }
-
     const filtered = allProducts.filter((item) =>
       item.name.toLowerCase().includes(text.toLowerCase())
     );
-    setResults(filtered); // ✅ cijeli objekt, ne samo string
+    setResults(filtered);
     setSearched(true);
   };
 
@@ -70,153 +78,154 @@ export default function SearchScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Pretraži proizvod</Text>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButton}>
-          <Image
-            source={require('@/assets/images/info-icon.png')}
-            style={styles.icon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.container}>
-      <View style={styles.inputWrapper}>
-          <Image source={require('@/assets/images/iconSearchBlack.png')} style={styles.searchIconBlack} />
-          <TextInput
-            placeholder="Upiši naziv ili barkod proizvoda"
-            placeholderTextColor="#999999"
-            value={query}
-            onChangeText={handleSearch}
-            onSubmitEditing={handleSubmit}
-            style={styles.input}
-          />
-        </View>
-
-
-      {query.length === 0 && !searched ? (
-        <>
-          <View style={styles.recentHeader}>
-            <Text style={styles.recentTitle}>Nedavno pretraživani</Text>
-            <TouchableOpacity onPress={handleClearRecent}>
-              <Image
-                source={require('@/assets/images/icontrash.png')}
-                style={{ width: 20, height: 20 }}
-              />
-            </TouchableOpacity>
-          </View>
-          {recentSearches.map((item) => (
-            <View key={item} style={styles.recentItem}>
-              <TouchableOpacity onPress={() => handleRecentSearch(item)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                <Image
-                  source={require('@/assets/images/iconSearchGrey.png')}
-                  style={styles.searchIconGrey}
-                />
-                <Text style={styles.recentText}>{item}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleDeleteRecent(item)}>
-                <Ionicons name="close-outline" size={20} color="#888" />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Pretraži proizvod</Text>
+              <TouchableOpacity
+                onPress={() => setModalVisible(true)}
+              >
+                <InfoIcon width={35} height={35} />
               </TouchableOpacity>
             </View>
-          ))}
-        </>
-      ) : searched && results.length === 0 ? (
-        <View style={styles.noResults}>
-          <Image
-            source={require('@/assets/images/NoResults.png')}
-            style={styles.noResultsImage}
-            resizeMode="contain"
-          />
-          <Text style={styles.noResultsText}>Nema rezultata</Text>
-          <Text style={styles.noResultsHint}>
-            Nismo pronašli nijedan proizvod za traženi pojam. Provjerite jeste li ispravno upisali naziv ili pokušajte s drugim pojmom.
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={results}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={({ item }) => (
-            <Link href="/product" asChild>
-              <TouchableOpacity style={styles.resultItem}>
-                <Text>{item.name}</Text>
+
+            <View style={styles.container}>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  placeholder="Upiši naziv ili barkod proizvoda"
+                  placeholderTextColor="#999999"
+                  value={query}
+                  onChangeText={handleSearch}
+                  onSubmitEditing={handleSubmit}
+                  style={styles.input}
+                />
+              </View>
+
+              {query.length === 0 && !searched ? (
+                <>
+                  <View style={styles.recentHeader}>
+                    <Text style={styles.recentTitle}>Nedavno pretraživani</Text>
+                    <TouchableOpacity onPress={handleClearRecent}>
+                      <IconTrash width={20} height={20} />
+                    </TouchableOpacity>
+                  </View>
+                  {recentSearches.map((item) => (
+                    <View key={item} style={styles.recentItem}>
+                      <TouchableOpacity
+                        onPress={() => handleRecentSearch(item)}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          flex: 1,
+                        }}
+                      >
+                        <IconSearchGrey
+                          width={16}
+                          height={16}
+                          style={{ marginRight: 8 }}
+                        />
+                        <Text style={styles.recentText}>{item}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => handleDeleteRecent(item)}
+                        style={{ padding: 4, justifyContent: 'center' }}
+                      >
+                        <IconDelete width={20} height={20} />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </>
+              ) : searched && results.length === 0 ? (
+                <View style={styles.noResults}>
+                  <Text style={styles.noResultsText}>Nema rezultata</Text>
+                  <Text style={styles.noResultsHint}>
+                    Nismo pronašli nijedan proizvod za traženi pojam. Provjerite
+                    jeste li ispravno upisali naziv ili pokušajte s drugim pojmom.
+                  </Text>
+                </View>
+              ) : (
+                <FlatList
+                  data={results}
+                  keyExtractor={(item) => String(item.id)}
+                  renderItem={({ item }) => (
+                    <Link href="/product" asChild>
+                      <TouchableOpacity style={styles.resultItem}>
+                        <Text>{item.name}</Text>
+                      </TouchableOpacity>
+                    </Link>
+                  )}
+                />
+              )}
+            </View>
+
+            <Modal
+              transparent={true}
+              visible={modalVisible}
+              animationType="fade"
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                activeOpacity={1}
+                onPressOut={() => setModalVisible(false)}
+              >
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>
+                    Ovdje možete pretraživati proizvode upisivanjem naziva ili barkoda.{"\n\n"}
+                    Na ekranu će vam se prikazati nedavno pretraživani pojmovi, a možete ih i obrisati.
+                  </Text>
+                </View>
               </TouchableOpacity>
-            </Link>
-          )}
-
-        />
-      )} 
-      </View>
-
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPressOut={() => setModalVisible(false)}
-        >
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>
-              Ovdje možete pretraživati proizvode upisivanjem naziva ili skeniranjem barkoda.
-            </Text>
+            </Modal>
           </View>
-        </TouchableOpacity>
-      </Modal>
-
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
-  flex: 1,
-  backgroundColor: '#fff',
-},
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   header: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  paddingTop: 30,
-  paddingHorizontal: 20,
-  backgroundColor: '#fff',
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 25,
+    paddingHorizontal: 20,
+  },
+  title: {
+    flex: 1,
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
   container: {
-    paddingTop: 20,
+    paddingTop: 30,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
     flex: 1,
   },
   inputWrapper: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  borderWidth: 1,
-  borderColor: '#000',
-  borderRadius: 12,
-  paddingHorizontal: 12,
-  paddingVertical: 10,
-  marginBottom: 20,
-},
-searchIconBlack: {
-  width: 20,
-  height: 20,
-  marginRight: 10,
-},
-input: {
-  flex: 1,
-  fontSize: 16,
-  color: '#000',
-  padding: 0,
-},
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 30,
+  },
+  input: {
     flex: 1,
-    color: '#000000',
+    fontSize: 16,
+    color: '#000',
+    padding: 0,
   },
   recentHeader: {
     flexDirection: 'row',
@@ -243,12 +252,6 @@ input: {
     marginTop: 40,
     paddingHorizontal: 10,
   },
-  noResultsImage: {
-  width: 180,
-  height: 180,
-  marginBottom: 20,
-},
-
   noResultsText: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -260,44 +263,31 @@ input: {
     color: '#666',
     fontSize: 14,
   },
-  searchIconGrey: {
-  width: 16,
-  height: 16,
-  marginRight: 8,
-  tintColor: '#888', // ako želiš sivkasti efekt
-},
   resultItem: {
     padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  iconButton: {
-  padding: 8,
-},
-modalOverlay: {
-  flex: 1,
-  backgroundColor: 'rgba(0,0,0,0.3)',
-  justifyContent: 'center',
-  alignItems: 'center',
-},
-modalView: {
-  backgroundColor: 'white',
-  padding: 20,
-  borderRadius: 10,
-  marginHorizontal: 40,
-  elevation: 5,
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-},
-modalText: {
-  fontSize: 16,
-  color: '#000',
-  textAlign: 'center',
-},
-icon: {
-  width: 24,
-  height: 24,
-},
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    marginHorizontal: 40,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#000',
+    textAlign: 'center',
+  },
 });

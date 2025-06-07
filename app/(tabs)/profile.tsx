@@ -1,4 +1,4 @@
-  import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -15,6 +15,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import EditIcon from '@/assets/images/editIcon.svg';
+import InfoIcon from '@/assets/images/info-icon.svg';
+
 export default function ProfileScreen() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [name, setName] = useState('Ivo Ivić');
@@ -23,36 +26,31 @@ export default function ProfileScreen() {
   const [editMode, setEditMode] = useState(false);
   const [tempName, setTempName] = useState(name);
   const [tempEmail, setTempEmail] = useState(email);
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+
   const router = useRouter();
 
-const openImageOptions = () => {
-  const options: Array<{
-  text: string;
-  onPress?: () => void;
-  style?: 'default' | 'cancel' | 'destructive';
-}> = profileImage
-  ? [
-      { text: 'Promijeni sliku', onPress: pickFromGallery },
-      { text: 'Ukloni sliku', onPress: () => setProfileImage(null), style: 'destructive' },
-      { text: 'Odustani', style: 'cancel' },
-    ]
-  : [
-      { text: 'Učitaj iz galerije', onPress: pickFromGallery },
-      { text: 'Kamera', onPress: takePhoto },
-      { text: 'Odustani', style: 'cancel' },
-    ];
+  const openImageOptions = () => {
+    const options = profileImage
+      ? [
+          { text: 'Promijeni sliku', onPress: pickFromGallery },
+          { text: 'Ukloni sliku', onPress: () => setProfileImage(null), style: 'destructive' as 'destructive' },
+          { text: 'Odustani', style: 'cancel' as 'cancel' },
+        ]
+      : [
+          { text: 'Učitaj iz galerije', onPress: pickFromGallery },
+          { text: 'Kamera', onPress: takePhoto },
+          { text: 'Odustani', style: 'cancel' as 'cancel' },
+        ];
 
-
-  Alert.alert(
-    'Profilna slika',
-    profileImage
-      ? 'Želiš li promijeniti ili ukloniti trenutnu sliku?'
-      : 'Dodaj svoju profilnu sliku.',
-    options,
-    { cancelable: true }
-  );
-};
-
+    Alert.alert(
+      'Profilna slika',
+      profileImage
+        ? 'Želiš li promijeniti ili ukloniti trenutnu sliku?'
+        : 'Dodaj svoju profilnu sliku.',
+      options
+    );
+  };
 
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -67,7 +65,7 @@ const openImageOptions = () => {
     }
   };
 
-   const takePhoto = async () => {
+  const takePhoto = async () => {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -90,10 +88,7 @@ const openImageOptions = () => {
           setEditModalVisible(true);
         },
       },
-      {
-        text: 'Odustani',
-        style: 'cancel',
-      },
+      { text: 'Odustani', style: 'cancel' as 'cancel' },
     ]);
   };
 
@@ -106,9 +101,14 @@ const openImageOptions = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      <View style={styles.header}>
         <Text style={styles.title}>Profil</Text>
+        <TouchableOpacity onPress={() => setInfoModalVisible(true)}>
+          <InfoIcon width={35} height={35} />
+        </TouchableOpacity>
+      </View>
 
+      <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.profileContainer}>
           <View style={styles.avatarWrapper}>
             {profileImage ? (
@@ -129,34 +129,24 @@ const openImageOptions = () => {
             <Text style={styles.name}>{name}</Text>
             <Text style={styles.email}>{email}</Text>
           </View>
-          <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
-            <Image
-              source={require('@/assets/images/iconEdit.png')}
-              style={styles.editIcon}
-            />
+          <TouchableOpacity onPress={handleEditPress}>
+            <EditIcon width={32} height={32} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.option} onPress={() => router.push('/omiljeni')}>
-        <Image
-         source={require('@/assets/images/iconHeart.png')} 
-         style={styles.optionIcon}
-        />
-       <Text style={styles.optionText}>Omiljeni proizvodi</Text>
-       <Image
-    source={require('@/assets/images/iconArrowRight.png')} 
-    style={styles.arrow}
-  />
-</TouchableOpacity>
+          <Image source={require('@/assets/images/iconHeart.png')} style={styles.optionIcon} />
+          <Text style={styles.optionText}>Omiljeni proizvodi</Text>
+          <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
+        </TouchableOpacity>
 
         <Link href="/settings" asChild>
-  <TouchableOpacity style={styles.option}>
-    <Image source={require('@/assets/images/iconSettings.png')} style={styles.optionIcon} />
-    <Text style={styles.optionText}>Postavke</Text>
-    <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
-  </TouchableOpacity>
-</Link>
-
+          <TouchableOpacity style={styles.option}>
+            <Image source={require('@/assets/images/iconSettings.png')} style={styles.optionIcon} />
+            <Text style={styles.optionText}>Postavke</Text>
+            <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
+          </TouchableOpacity>
+        </Link>
 
         <View style={styles.option}>
           <Image
@@ -171,7 +161,7 @@ const openImageOptions = () => {
         </View>
       </ScrollView>
 
-       <Modal visible={editModalVisible} transparent animationType="fade">
+      <Modal visible={editModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>Uredi profil</Text>
@@ -199,6 +189,21 @@ const openImageOptions = () => {
           </View>
         </View>
       </Modal>
+
+      <Modal transparent visible={infoModalVisible} animationType="fade">
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPressOut={() => setInfoModalVisible(false)}
+        >
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              Ovdje se nalazi tvoj korisnički profil.{"\n\n"}
+              Možeš urediti svoje podatke, postaviti sliku i pristupiti omiljenim proizvodima te postavkama.
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -208,16 +213,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 25,
+    paddingHorizontal: 20,
+  },
+  title: {
+    flex: 1,
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#000000',
+  },
   scroll: {
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 40,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    alignSelf: 'center',
-    marginBottom: 24,
   },
   profileContainer: {
     flexDirection: 'row',
@@ -262,7 +273,6 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
   },
-  
   profileInfo: {
     flex: 1,
     marginLeft: 12,
@@ -276,13 +286,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#888',
     marginTop: 4,
-  },
-  editButton: {
-    padding: 4,
-  },
-  editIcon: {
-    width: 32,
-    height: 32,
   },
   option: {
     flexDirection: 'row',
@@ -338,5 +341,10 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     padding: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#000',
+    textAlign: 'center',
   },
 });
