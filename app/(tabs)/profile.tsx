@@ -1,5 +1,6 @@
   import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -147,17 +148,14 @@ const openImageOptions = () => {
           />
         </View>
 
-        <View style={styles.option}>
-          <Image
-            source={require('@/assets/images/iconSettings.png')}
-            style={styles.optionIcon}
-          />
-          <Text style={styles.optionText}>Postavke</Text>
-          <Image
-            source={require('@/assets/images/iconArrowRight.png')}
-            style={styles.arrow}
-          />
-        </View>
+        <Link href="/settings" asChild>
+  <TouchableOpacity style={styles.option}>
+    <Image source={require('@/assets/images/iconSettings.png')} style={styles.optionIcon} />
+    <Text style={styles.optionText}>Postavke</Text>
+    <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
+  </TouchableOpacity>
+</Link>
+
 
         <View style={styles.option}>
           <Image
