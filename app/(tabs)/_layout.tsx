@@ -1,6 +1,13 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Image, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+
+// SVG ikone
+import NavIconCart from '@/assets/images/navIconCart.svg';
+import NavIconHome from '@/assets/images/navIconHome.svg';
+import NavIconProfile from '@/assets/images/navIconProfile.svg';
+import NavIconScan from '@/assets/images/navIconScan.svg';
+import NavIconSearch from '@/assets/images/navIconSearch.svg';
 
 export default function TabLayout() {
   return (
@@ -10,7 +17,7 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: 'absolute',
-          bottom: 10, // 👈 Blago podignuto
+          bottom: 10,
           height: 70,
           borderTopWidth: 0,
           backgroundColor: '#fff',
@@ -21,24 +28,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: '',
-          tabBarIcon: () => (
-            <Image
-              source={require('@/assets/images/homeNavIcon.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          ),
+          tabBarIcon: () => <NavIconHome width={24} height={24} />, 
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
           title: '',
-          tabBarIcon: () => (
-            <Image
-              source={require('@/assets/images/searchNavIcon.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          ),
+          tabBarIcon: () => <NavIconSearch width={24} height={24} />, 
         }}
       />
       <Tabs.Screen
@@ -63,10 +60,7 @@ export default function TabLayout() {
                 elevation: 10,
               }}
             >
-              <Image
-                source={require('@/assets/images/mainScanIcon.png')}
-                style={{ width: 40, height: 40 }}
-              />
+              <NavIconScan width={40} height={40} />
             </TouchableOpacity>
           ),
         }}
@@ -75,24 +69,14 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: '',
-          tabBarIcon: () => (
-            <Image
-              source={require('@/assets/images/profileNavIcon.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          ),
+          tabBarIcon: () => <NavIconProfile width={24} height={24} />, 
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
           title: '',
-          tabBarIcon: () => (
-            <Image
-              source={require('@/assets/images/cartNavIcon.png')}
-              style={{ width: 24, height: 24 }}
-            />
-          ),
+          tabBarIcon: () => <NavIconCart width={24} height={24} />, 
         }}
       />
       <Tabs.Screen

@@ -1,7 +1,6 @@
 import { useNavigation, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
   Modal,
   Pressable,
   StatusBar,
@@ -11,6 +10,13 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+// SVG komponente
+import IconCart from '@/assets/images/iconCart.svg';
+import IconProfile from '@/assets/images/iconProfile.svg';
+import IconScan from '@/assets/images/iconScan.svg';
+import IconSearch from '@/assets/images/iconSearch.svg';
+import InfoIcon from '@/assets/images/info-icon.svg';
 
 export default function HomeScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,11 +35,7 @@ export default function HomeScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>Scan & Save</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButton}>
-          <Image
-            source={require('@/assets/images/info-icon.png')}
-            style={styles.icon}
-            resizeMode="contain"
-          />
+          <InfoIcon width={24} height={24} />
         </TouchableOpacity>
       </View>
 
@@ -41,23 +43,24 @@ export default function HomeScreen() {
       <View style={styles.iconLayout}>
         {/* Scan - Center */}
         <TouchableOpacity onPress={() => router.push('/scan')} style={styles.scanIcon}>
-          <Image source={require('@/assets/images/iconScan.png')} style={styles.iconImageLarge} />
+          <IconScan width={120} height={120} />
         </TouchableOpacity>
+
 
         {/* Cart - Top Right */}
         <TouchableOpacity
           onPress={() => router.push('/cart')}
           style={[styles.sideIcon, { transform: [{ translateX: 100 }, { translateY: -130 }] }]}
         >
-          <Image source={require('@/assets/images/iconCart.png')} style={styles.iconImageMedium} />
+          <IconCart width={36} height={36} />
         </TouchableOpacity>
 
-        {/* Profile - Bottom Right (moved more top-right) */}
+        {/* Profile - Bottom Right */}
         <TouchableOpacity
           onPress={() => router.push('/profile')}
           style={[styles.sideIcon, { transform: [{ translateX: 120 }, { translateY: 80 }] }]}
         >
-          <Image source={require('@/assets/images/iconProfile.png')} style={styles.iconImageMedium} />
+          <IconProfile width={36} height={36} />
         </TouchableOpacity>
 
         {/* Search - Bottom Left */}
@@ -65,7 +68,7 @@ export default function HomeScreen() {
           onPress={() => router.push('/search')}
           style={[styles.sideIcon, { transform: [{ translateX: -110 }, { translateY: 100 }] }]}
         >
-          <Image source={require('@/assets/images/iconSearch.png')} style={styles.iconImageMedium} />
+          <IconSearch width={36} height={36} />
         </TouchableOpacity>
       </View>
 
@@ -79,7 +82,8 @@ export default function HomeScreen() {
         <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
-              Nalazite se na početnom zaslonu aplikacije Scan & Save. Ovdje možete pristupiti različitim dijelovima aplikacije pritiskom na jednu od narandžastih ikona.
+              Nalazite se na početnom zaslonu aplikacije Scan & Save.{"\n\n"}
+              Ovdje možete pristupiti različitim dijelovima aplikacije pritiskom na jednu od narandžastih ikona.
             </Text>
           </View>
         </Pressable>
@@ -107,10 +111,6 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 8,
-  },
-  icon: {
-    width: 24,
-    height: 24,
   },
   iconLayout: {
     flex: 1,
@@ -147,21 +147,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  iconImage: {
-    width: 28,
-    height: 28,
-    tintColor: 'white',
-  },
-  iconImageMedium: {
-    width: 36,
-    height: 36,
-    tintColor: 'white',
-  },
-  iconImageLarge: {
-    width: 50,
-    height: 50,
-    tintColor: 'white',
-  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.3)',
@@ -173,8 +158,10 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginHorizontal: 40,
+    alignItems: 'center', // 👈 dodano za centriranje sadržaja
   },
   modalText: {
     fontSize: 16,
+    textAlign: 'center', // 👈 dodano za centriranje teksta
   },
 });

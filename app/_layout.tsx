@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Logo from '../assets/images/logo.svg'; // SVG komponenta
 
 export default function RootLayout() {
   const [isLoading, setIsLoading] = useState(true);
@@ -8,7 +9,7 @@ export default function RootLayout() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // 5 seconds
+    }, 5000); // 5 sekundi
 
     return () => clearTimeout(timer);
   }, []);
@@ -16,11 +17,7 @@ export default function RootLayout() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Image
-          source={require('../assets/images/logo.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Logo width={350} height={350} />
       </View>
     );
   }
@@ -40,9 +37,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#FE8C00',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logo: {
-    width: 350,
-    height: 350,
   },
 });
