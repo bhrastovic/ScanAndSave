@@ -1,6 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { Link, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -15,8 +14,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+// SVG ikone
+import ArrowRight from '@/assets/images/arrowRight.svg';
+import CameraIcon from '@/assets/images/cameraIcon.svg';
+import CardIcon from '@/assets/images/cardIcon.svg';
 import EditIcon from '@/assets/images/editIcon.svg';
+import HeartIcon from '@/assets/images/heartIcon.svg';
 import InfoIcon from '@/assets/images/info-icon.svg';
+import SettingsIcon from '@/assets/images/settingsIcon.svg';
 
 export default function ProfileScreen() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -27,8 +32,6 @@ export default function ProfileScreen() {
   const [tempName, setTempName] = useState(name);
   const [tempEmail, setTempEmail] = useState(email);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
-
-  const router = useRouter();
 
   const openImageOptions = () => {
     const options = profileImage
@@ -99,6 +102,10 @@ export default function ProfileScreen() {
     setEditModalVisible(false);
   };
 
+  const showComingSoon = () => {
+    Alert.alert('Uskoro!', 'Ova funkcionalnost dolazi uskoro.');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -119,10 +126,7 @@ export default function ProfileScreen() {
               </View>
             )}
             <TouchableOpacity style={styles.cameraButton} onPress={openImageOptions}>
-              <Image
-                source={require('@/assets/images/iconCamera.png')}
-                style={styles.cameraIcon}
-              />
+              <CameraIcon width={28} height={28} />
             </TouchableOpacity>
           </View>
           <View style={styles.profileInfo}>
@@ -134,31 +138,23 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.option} onPress={() => router.push('/omiljeni')}>
-          <Image source={require('@/assets/images/iconHeart.png')} style={styles.optionIcon} />
+        <TouchableOpacity style={styles.option} onPress={showComingSoon}>
+          <HeartIcon width={28} height={28} style={{ marginRight: 20 }} />
           <Text style={styles.optionText}>Omiljeni proizvodi</Text>
-          <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
+          <ArrowRight width={20} height={20} />
         </TouchableOpacity>
 
-        <Link href="/settings" asChild>
-          <TouchableOpacity style={styles.option}>
-            <Image source={require('@/assets/images/iconSettings.png')} style={styles.optionIcon} />
-            <Text style={styles.optionText}>Postavke</Text>
-            <Image source={require('@/assets/images/iconArrowRight.png')} style={styles.arrow} />
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity style={styles.option} onPress={showComingSoon}>
+          <SettingsIcon width={28} height={28} style={{ marginRight: 20 }} />
+          <Text style={styles.optionText}>Postavke</Text>
+          <ArrowRight width={20} height={20} />
+        </TouchableOpacity>
 
-        <View style={styles.option}>
-          <Image
-            source={require('@/assets/images/iconCreditCard.png')}
-            style={styles.optionIcon}
-          />
+        <TouchableOpacity style={styles.option} onPress={showComingSoon}>
+          <CardIcon width={28} height={28} style={{ marginRight: 20 }} />
           <Text style={styles.optionText}>Pretplate</Text>
-          <Image
-            source={require('@/assets/images/iconArrowRight.png')}
-            style={styles.arrow}
-          />
-        </View>
+          <ArrowRight width={20} height={20} />
+        </TouchableOpacity>
       </ScrollView>
 
       <Modal visible={editModalVisible} transparent animationType="fade">
@@ -199,7 +195,7 @@ export default function ProfileScreen() {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
               Ovdje se nalazi tvoj korisnički profil.{"\n\n"}
-              Možeš urediti svoje podatke, postaviti sliku i pristupiti omiljenim proizvodima te postavkama.
+              Možeš urediti svoje podatke i postaviti sliku!
             </Text>
           </View>
         </TouchableOpacity>
@@ -269,10 +265,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.5,
   },
-  cameraIcon: {
-    width: 28,
-    height: 28,
-  },
   profileInfo: {
     flex: 1,
     marginLeft: 12,
@@ -294,19 +286,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#ccc',
   },
-  optionIcon: {
-    width: 28,
-    height: 28,
-    marginRight: 20,
-  },
   optionText: {
     flex: 1,
     fontSize: 16,
     color: '#000',
-  },
-  arrow: {
-    width: 20,
-    height: 20,
   },
   modalOverlay: {
     flex: 1,

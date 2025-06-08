@@ -19,20 +19,15 @@ import products from '../../data/products_proba.json';
 // SVG komponente
 import IconDelete from '@/assets/images/iconDelete.svg';
 import IconSearchGrey from '@/assets/images/iconSearchGrey.svg';
-import IconTrash from '@/assets/images/iconTrash.svg';
 import InfoIcon from '@/assets/images/info-icon.svg';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [recentSearches, setRecentSearches] = useState([
-    'Jaja',
-    'Kinder bueno',
-    'Livanjski sir',
-    'Pršut',
-  ]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [results, setResults] = useState<typeof products>([]);
   const [searched, setSearched] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [infoRecentModalVisible, setInfoRecentModalVisible] = useState(false);
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -52,10 +47,6 @@ export default function SearchScreen() {
   const handleRecentSearch = (text: string) => {
     setQuery(text);
     handleSearch(text);
-  };
-
-  const handleClearRecent = () => {
-    setRecentSearches([]);
   };
 
   const handleDeleteRecent = (item: string) => {
@@ -78,16 +69,16 @@ export default function SearchScreen() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={{ flex: 1 }}>
+            {/* Gornji header */}
             <View style={styles.header}>
               <Text style={styles.title}>Pretraži proizvod</Text>
-              <TouchableOpacity
-                onPress={() => setModalVisible(true)}
-              >
+              <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <InfoIcon width={35} height={35} />
               </TouchableOpacity>
             </View>
 
             <View style={styles.container}>
+              {/* Input za pretragu */}
               <View style={styles.inputWrapper}>
                 <TextInput
                   placeholder="Upiši naziv ili barkod proizvoda"
@@ -99,12 +90,13 @@ export default function SearchScreen() {
                 />
               </View>
 
+              {/* Nedavno pretraživani */}
               {query.length === 0 && !searched ? (
                 <>
                   <View style={styles.recentHeader}>
                     <Text style={styles.recentTitle}>Nedavno pretraživani</Text>
-                    <TouchableOpacity onPress={handleClearRecent}>
-                      <IconTrash width={20} height={20} />
+                    <TouchableOpacity onPress={() => setInfoRecentModalVisible(true)}>
+                      <InfoIcon width={35} height={35} />
                     </TouchableOpacity>
                   </View>
                   {recentSearches.map((item) => (
@@ -117,11 +109,7 @@ export default function SearchScreen() {
                           flex: 1,
                         }}
                       >
-                        <IconSearchGrey
-                          width={16}
-                          height={16}
-                          style={{ marginRight: 8 }}
-                        />
+                        <IconSearchGrey width={16} height={16} style={{ marginRight: 8 }} />
                         <Text style={styles.recentText}>{item}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
@@ -137,8 +125,8 @@ export default function SearchScreen() {
                 <View style={styles.noResults}>
                   <Text style={styles.noResultsText}>Nema rezultata</Text>
                   <Text style={styles.noResultsHint}>
-                    Nismo pronašli nijedan proizvod za traženi pojam. Provjerite
-                    jeste li ispravno upisali naziv ili pokušajte s drugim pojmom.
+                    Nismo pronašli nijedan proizvod za traženi pojam. Provjerite jeste li ispravno
+                    upisali naziv ili pokušajte s drugim pojmom.
                   </Text>
                 </View>
               ) : (
@@ -146,16 +134,12 @@ export default function SearchScreen() {
                   data={results}
                   keyExtractor={(item) => item.barcode}
                   renderItem={({ item }) => (
-                    <Link href="/product" asChild>
+                    <Link href={{ pathname: '/product', params: { barcode: item.barcode } }} asChild>
                       <TouchableOpacity style={styles.resultItem}>
                         <View>
                           <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
                           <Text style={{ color: '#666' }}>Barkod: {item.barcode}</Text>
-                          <Text style={{ marginTop: 2 }}>
-                          Konzum: {item?.prices?.Konzum != null ? `${item.prices.Konzum.toFixed(2)} €` : 'N/A'}
-                          </Text>
                         </View>
-
                       </TouchableOpacity>
                     </Link>
                   )}
@@ -163,6 +147,7 @@ export default function SearchScreen() {
               )}
             </View>
 
+            {/* Modal: Gornji info */}
             <Modal
               transparent={true}
               visible={modalVisible}
@@ -179,6 +164,24 @@ export default function SearchScreen() {
                     Ovdje možete pretraživati proizvode upisivanjem naziva ili barkoda.{"\n\n"}
                     Na ekranu će vam se prikazati nedavno pretraživani pojmovi, a možete ih i obrisati.
                   </Text>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+
+            {/* Modal: Info za "Nedavno pretraživani" */}
+            <Modal
+              transparent={true}
+              visible={infoRecentModalVisible}
+              animationType="fade"
+              onRequestClose={() => setInfoRecentModalVisible(false)}
+            >
+              <TouchableOpacity
+                style={styles.modalOverlay}
+                activeOpacity={1}
+                onPressOut={() => setInfoRecentModalVisible(false)}
+              >
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>Ova funkcionalnost dolazi uskoro.</Text>
                 </View>
               </TouchableOpacity>
             </Modal>

@@ -10,36 +10,31 @@
         "store": "Kaufland",
         "city": "Zagreb",
         "branch": "Kaufland Dubrava",
-        "price": 5.29,
-        "dodano": false
+        "price": 5.29
       },
       {
         "store": "Kaufland",
         "city": "Split",
         "branch": "Kaufland Split",
-        "price": 5.19,
-        "dodano": false
+        "price": 5.19
       },
       {
         "store": "Konzum",
         "city": "Osijek",
         "branch": "Konzum Gacka",
-        "price": 5.49,
-        "dodano": false
+        "price": 5.49
       },
       {
         "store": "Spar",
         "city": "Rijeka",
         "branch": "Spar Tower",
-        "price": 5.39,
-        "dodano": false
+        "price": 5.39
       },
       {
         "store": "Lidl",
         "city": "Zagreb",
         "branch": "Lidl Kustošija",
-        "price": 5.09,
-        "dodano": false
+        "price": 5.09
       }
     ]
   }

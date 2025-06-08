@@ -80,7 +80,7 @@ export default function HomeScreen() {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
               Nalazite se na početnom zaslonu aplikacije Scan & Save.{"\n\n"}
-              Ovdje možete pristupiti različitim dijelovima aplikacije pritiskom na jednu od narandžastih ikona.
+              Ovdje možete pristupiti različitim dijelovima aplikacije pritiskom na jednu od narančastih ikona.
             </Text>
           </View>
         </Pressable>
