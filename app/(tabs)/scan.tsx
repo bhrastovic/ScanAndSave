@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import products from '../../data/products_proba.json';
 
 // SVG ikona
 import InfoIcon from '@/assets/images/info-icon.svg';
@@ -49,21 +50,34 @@ export default function ScanScreen() {
     }, [params.clearManualInput])
   );
 
-  const handleNavigate = () => {
-    setHasScanned(true);
-    router.push('/product');
+  const findProductByBarcode = (barcode: string) => {
+    return products.find((product) => product.barcode.includes(barcode));
+  };
+
+  const handleNavigate = (barcode: string) => {
+    const product = findProductByBarcode(barcode);
+
+    if (product) {
+      setHasScanned(true);
+      router.push({
+        pathname: '/product',
+        params: { barcode: product.barcode },
+      });
+    } else {
+      alert('Proizvod nije pronađen.');
+    }
   };
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
     if (!hasScanned) {
-      handleNavigate();
+      handleNavigate(data);
     }
   };
 
   const handleManualChange = (text: string) => {
     setManualInput(text);
-    if (text.length === 13) {
-      handleNavigate();
+    if (text.length >= 8 && text.length <=13) {
+      handleNavigate(text);
     }
   };
 
@@ -126,7 +140,7 @@ export default function ScanScreen() {
               onChangeText={handleManualChange}
               style={styles.input}
             />
-            <Text style={styles.note}>Barkod mora sadržavati 13 znamenki</Text>
+            <Text style={styles.note}>Barkod mora sadržavati najmanje 8 znamenki</Text>
           </View>
         </View>
 

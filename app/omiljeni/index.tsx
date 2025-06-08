@@ -1,15 +1,16 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Modal,
-    Pressable,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Modal,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import products from '../../data/products_proba.json';
 
 type Product = {
   id: number;
@@ -18,26 +19,20 @@ type Product = {
   borderColor: string;
 };
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Lay's Čips Paprika Maxx",
-    barcode: '5 900259 128966',
-    borderColor: '#FFD700', // zlatna
-  },
-  {
-    id: 2,
-    name: 'Domaćica Original 300 g',
-    barcode: '3 850102 314126',
-    borderColor: '#C0C0C0', // srebrna
-  },
-  {
-    id: 3,
-    name: 'Poli Classic 500 g',
-    barcode: '3 838977 014051',
-    borderColor: '#CD7F32', // brončana
-  },
+const favoriteBarcodes: string [] =[
+  '3858885787121',
+  '3850111309684', 
+  '3850111600262',
 ];
+
+const favoriteProducts: Product[] = products
+  .filter((product) => favoriteBarcodes.includes(product.barcode))
+  .map((products, index) => ({
+    id: index +1,
+    name: products.name,
+    barcode: products.barcode,
+    borderColor:  index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : '#CD7F32',
+  }));
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -62,7 +57,7 @@ export default function FavoritesScreen() {
 
         <View style={styles.spacer} />
 
-        {products.map((item) => (
+        {favoriteProducts.map((item) => (
           <View key={item.id} style={styles.productRow}>
             <View style={[styles.imageBox, { borderColor: item.borderColor }]}>
               <Text style={styles.imageText}>image</Text>

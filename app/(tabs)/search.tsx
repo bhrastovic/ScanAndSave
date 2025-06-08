@@ -14,20 +14,13 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import products from '../../data/products_proba.json';
 
 // SVG komponente
 import IconDelete from '@/assets/images/iconDelete.svg';
 import IconSearchGrey from '@/assets/images/iconSearchGrey.svg';
 import IconTrash from '@/assets/images/iconTrash.svg';
 import InfoIcon from '@/assets/images/info-icon.svg';
-
-const allProducts = [
-  { id: '1', name: 'Kinder jaje' },
-  { id: '2', name: 'Kinder joy' },
-  { id: '3', name: 'Kinder čokolada' },
-  { id: '4', name: 'Kinder bueno bijeli' },
-  { id: '5', name: 'Kinder bueno crni' },
-];
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
@@ -37,7 +30,7 @@ export default function SearchScreen() {
     'Livanjski sir',
     'Pršut',
   ]);
-  const [results, setResults] = useState<typeof allProducts>([]);
+  const [results, setResults] = useState<typeof products>([]);
   const [searched, setSearched] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -48,8 +41,9 @@ export default function SearchScreen() {
       setSearched(false);
       return;
     }
-    const filtered = allProducts.filter((item) =>
-      item.name.toLowerCase().includes(text.toLowerCase())
+    const filtered = products.filter((item) =>
+      item.name.toLowerCase().includes(text.toLowerCase()) ||
+      item.barcode.includes(text)
     );
     setResults(filtered);
     setSearched(true);
@@ -150,11 +144,18 @@ export default function SearchScreen() {
               ) : (
                 <FlatList
                   data={results}
-                  keyExtractor={(item) => String(item.id)}
+                  keyExtractor={(item) => item.barcode}
                   renderItem={({ item }) => (
                     <Link href="/product" asChild>
                       <TouchableOpacity style={styles.resultItem}>
-                        <Text>{item.name}</Text>
+                        <View>
+                          <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
+                          <Text style={{ color: '#666' }}>Barkod: {item.barcode}</Text>
+                          <Text style={{ marginTop: 2 }}>
+                          Konzum: {item?.prices?.Konzum != null ? `${item.prices.Konzum.toFixed(2)} €` : 'N/A'}
+                          </Text>
+                        </View>
+
                       </TouchableOpacity>
                     </Link>
                   )}

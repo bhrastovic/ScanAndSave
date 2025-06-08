@@ -12,16 +12,41 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import products from '../../data/products_proba.json';
+
+type StoreName = 'Konzum' | 'Lidl' | 'Plodine' | 'Spar';
 
 export default function CartScreen() {
   const [expandedStores, setExpandedStores] = useState<string[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({
-    '1': 1,
-    '2': 1,
-    '3': 1,
-    '4': 1,
+    '3858885787121': 1,
+    '3850111309684': 1,
   });
   const [infoModalVisible, setInfoModalVisible] = useState(false);
+
+  const cartBarcodes = Object.keys(quantities);
+
+  const cartProducts = products.filter((product) =>
+    cartBarcodes.includes(product.barcode)
+);
+
+  const stores: StoreName[] = ['Konzum', 'Lidl', 'Plodine', 'Spar'];
+
+  const cartData = stores
+    .map((store: StoreName) => {
+      const storeProduct = cartProducts
+        .filter((p) => p.prices[store] !== null)
+        .map((p) => ({
+          id: p.barcode,
+          name: p.name,
+          price: p.prices[store] as number,
+        }));
+      return {
+        store,
+        products: storeProduct,
+      };
+    })
+    .filter((s) => s.products.length > 0);
 
   const toggleExpand = (store: string) => {
     setExpandedStores((prev) =>
@@ -61,37 +86,12 @@ export default function CartScreen() {
     }
   };
 
-  const cartData = [
-    {
-      store: 'Konzum',
-      products: [
-        { id: '1', name: 'Kinder Bueno', price: 1.99 },
-        { id: '2', name: 'Milka Oreo', price: 2.5 },
-        { id: '3', name: 'Livanjski sir', price: 5.6 },
-      ],
-    },
-    {
-      store: 'Spar',
-      products: [
-        { id: '3', name: 'Čips paprika', price: 1.99 },
-        { id: '4', name: 'Pepsi 2L', price: 2.99 },
-      ],
-    },
-  ];
-
   const getStoreTotal = (products: { id: string; price: number }[]) => {
     return products.reduce((sum, product) => {
       const qty = quantities[product.id] ?? 0;
       return sum + qty * product.price;
     }, 0);
   };
-
-  const filteredCartData = cartData
-    .map((store) => {
-      const filteredProducts = store.products.filter((p) => quantities[p.id] !== undefined);
-      return { ...store, products: filteredProducts };
-    })
-    .filter((store) => store.products.length > 0);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -104,7 +104,7 @@ export default function CartScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {filteredCartData.map((store) => {
+        {cartData.map((store) => {
           const isExpanded = expandedStores.includes(store.store);
           const storeTotal = getStoreTotal(store.products).toFixed(2);
 

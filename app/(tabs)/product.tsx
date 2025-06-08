@@ -1,8 +1,9 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActionSheetIOS,
   Alert,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -13,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import products from '../../data/products_proba.json';
 
 // SVG ikone
 import BackIcon from '@/assets/images/backIcon.svg';
@@ -21,17 +23,45 @@ import SortIcon from '@/assets/images/sortIcon.svg';
 
 export default function ProductScreen() {
   const router = useRouter();
-  const [infoModalVisible, setInfoModalVisible] = useState(false);
-  const [shopModalVisible, setShopModalVisible] = useState(false);
-  const [sortOption, setSortOption] = useState('');
+  const { barcode } = useLocalSearchParams();
+  const product = products.find((p) => p.barcode === barcode);
 
-  const [shops, setShops] = useState([
-    { name: 'Trgovina 1', current: '9.99', lowest: '9.70' },
-    { name: 'Trgovina 2', current: '10.20', lowest: '9.90' },
-    { name: 'Trgovina 3', current: '10.50', lowest: '10.20' },
-    { name: 'Trgovina 4', current: '11.00', lowest: '8.70' },
-    { name: 'Trgovina 5', current: '12.41', lowest: '9.50' },
-  ]);
+  if(!product) {
+  return (
+  <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+    <Text style={{ fontSize: 16 }}>Proizvod nije pronađen.</Text>
+    <TouchableOpacity onPress={() => router.back()} style={{ marginTop: 20 }}>
+      <Text style={{ color: 'blue' }}>Vrati se natrag</Text>
+    </TouchableOpacity>
+  </View>
+  );
+}
+
+const imageMap: Record<string,any> = {
+  "domacica.jpeg": require('@/assets/images/domacica.jpeg'),
+  "KinderJaje.jpg": require('@/assets/images/KinderJaje.jpg'),
+  "CocaCola.jpg": require('@/assets/images/CocaCola.jpg'),
+  "RioMare.png": require('@/assets/images/RioMare.png'),
+  "PoliSalama.jpeg": require('@/assets/images/PoliSalama.jpeg'),
+  "Dorina.jpeg": require('@/assets/images/Dorina.jpeg'),
+  "Barcaffe.jpeg": require('@/assets/images/Barcaffe.jpeg'),
+  "nutella.jpeg": require('@/assets/images/nutella.jpeg'),
+  "Jana.jpeg": require('@/assets/images/Jana.jpeg'),
+  "LaysMaxx.jpeg": require('@/assets/images/LaysMaxx.jpeg'),
+
+
+};
+
+const [infoModalVisible, setInfoModalVisible] = useState(false);
+const [shopModalVisible, setShopModalVisible] = useState(false);
+const [sortOption, setSortOption] = useState('');
+const [shops, setShops] = useState(() =>
+  Object.entries(product.prices).map(([name, price]) => ({
+    name,
+    current: price?.toFixed(2) ?? '-',
+    lowest: price?.toFixed(2) ?? '-',
+  }))
+);
 
   const showToast = (message: string) => {
     if (Platform.OS === 'android') {
@@ -102,12 +132,21 @@ export default function ProductScreen() {
       </TouchableOpacity>
 
       <View style={styles.productSection}>
-        <View style={styles.imagePlaceholder} />
+        <View style={styles.imagePlaceholder}>
+          <Image
+            source={
+              product.image
+              ? imageMap[product.image.split('/').pop() ?? ''] 
+              : require('@/assets/images/default.jpg')
+            }
+            style={{width: '100%', height: '100%', resizeMode: 'contain'}}
+          />
+        </View>
         <View style={styles.productInfo}>
-          <Text style={styles.productName}>IME PROIZVODA</Text>
+          <Text style={styles.productName}>{product.name}</Text>
           <Text style={styles.productDetail}>Gramaža:</Text>
           <Text style={styles.productDetail}>Proizvođač:</Text>
-          <Text style={styles.productDetail}>Barkod:</Text>
+          <Text style={styles.productDetail}>{product.barcode}</Text>
         </View>
         <TouchableOpacity onPress={() => setInfoModalVisible(true)} style={styles.iconButton}>
           <InfoIcon width={35} height={35} />

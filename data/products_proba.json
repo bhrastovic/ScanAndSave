@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Domaćica Original",
+    "barcode": "3850101234567",
+    "image": "../assets/images/domacica.png",
+    "prices": {
+      "Konzum": 2.49,
+      "Lidl": 2.39,
+      "Plodine": 2.59,
+      "Spar": 2.55
+    }
+  },
+  {
+    "name": "Kinder Jaje",
+    "barcode": "123456789",
+    "image": "../assets/images/kinderjaje.png",
+    "prices": {
+      "Konzum": 1.49,
+      "Lidl": 1.39,
+      "Plodine": 1.59,
+      "Spar": null
+    }
+  },
+  {
+    "name": "Poli Salama 500g",
+    "barcode": "3838989123456",
+    "image": "../assets/images/poli.png",
+    "prices": {
+      "Konzum": 5.49,
+      "Lidl": null,
+      "Plodine": 5.59,
+      "Spar": 5.69
+    }
+  },
+  {
+    "name": "Čipi Čips Slani",
+    "barcode": "3856023409876",
+    "image": "../assets/images/cips.png",
+    "prices": {
+      "Konzum": 1.99,
+      "Lidl": 1.89,
+      "Plodine": 2.09,
+      "Spar": 2.05
+    }
+  },
+  {
+    "name": "Coca Cola 1.5L",
+    "barcode": "5449000000996",
+    "image": "../assets/images/cocacola.png",
+    "prices": {
+      "Konzum": 1.29,
+      "Lidl": 1.19,
+      "Plodine": 1.35,
+      "Spar": 1.25
+    }
+  },
+  {
+    "name": "Barcaffe Kava 250g",
+    "barcode": "3838989123000",
+    "image": "../assets/images/barcaffe.png",
+    "prices": {
+      "Konzum": 3.99,
+      "Lidl": null,
+      "Plodine": 4.09,
+      "Spar": 4.15
+    }
+  },
+  {
+    "name": "Dorina Mliječna 100g",
+    "barcode": "3850102101234",
+    "image": "../assets/images/dorina.png",
+    "prices": {
+      "Konzum": 1.05,
+      "Lidl": null,
+      "Plodine": 1.15,
+      "Spar": 1.09
+    }
+  },
+  {
+    "name": "Rio Mare Tuna 160g",
+    "barcode": "8004030101203",
+    "image": "../assets/images/riomare.png",
+    "prices": {
+      "Konzum": 3.45,
+      "Lidl": 3.35,
+      "Plodine": 3.49,
+      "Spar": null
+    }
+  },
+  {
+    "name": "Jana Voda 1.5L",
+    "barcode": "3850123456789",
+    "image": "../assets/images/jana.png",
+    "prices": {
+      "Konzum": 0.79,
+      "Lidl": 0.75,
+      "Plodine": 0.85,
+      "Spar": 0.82
+    }
+  },
+  {
+    "name": "Nutella 400g",
+    "barcode": "80135876",
+    "image": "../assets/images/nutella.png",
+    "prices": {
+      "Konzum": 3.99,
+      "Lidl": 3.79,
+      "Plodine": 4.09,
+      "Spar": 3.89
+    }
+  }
+]
