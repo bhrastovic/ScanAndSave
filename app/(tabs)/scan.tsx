@@ -1,3 +1,4 @@
+import InfoIcon from '@/assets/images/info-icon.svg';
 import { useFocusEffect } from '@react-navigation/native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -15,10 +16,20 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import products from '../../data/products_proba.json';
+import rawProducts from '../../data/products_proba.json';
 
-// SVG ikona
-import InfoIcon from '@/assets/images/info-icon.svg';
+// Tip za proizvod
+type Product = {
+  name: string;
+  barcode: string;
+  image: string;
+  prices: {
+    [store: string]: number | null;
+  };
+};
+
+// Sigurno pretvori JSON u tipizirani niz
+const products = rawProducts as unknown as Product[];
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -35,14 +46,14 @@ export default function ScanScreen() {
   useFocusEffect(
     useCallback(() => {
       if (params.clearManualInput === 'true') {
-        setInputEnabled(false); // blokiraj input
+        setInputEnabled(false);
         setManualInput('');
         setHasScanned(false);
 
         setTimeout(() => {
           Keyboard.dismiss();
           inputRef.current?.blur();
-          setInputEnabled(true); // vrati input nakon što je fokus maknut
+          setInputEnabled(true);
         }, 300);
       } else {
         setHasScanned(false);
@@ -50,7 +61,7 @@ export default function ScanScreen() {
     }, [params.clearManualInput])
   );
 
-  const findProductByBarcode = (barcode: string) => {
+  const findProductByBarcode = (barcode: string): Product | undefined => {
     return products.find((product) => product.barcode.includes(barcode));
   };
 
@@ -70,15 +81,32 @@ export default function ScanScreen() {
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
     if (!hasScanned) {
-      handleNavigate(data);
+      setHasScanned(true);
+      const product = findProductByBarcode(data);
+
+      if (product) {
+        router.push({
+          pathname: '/product',
+          params: { barcode: product.barcode },
+        });
+      } else {
+        alert('Proizvod nije pronađen.');
+        setTimeout(() => setHasScanned(false), 1500); // resetiraj za novo skeniranje
+      }
     }
   };
 
   const handleManualChange = (text: string) => {
-    setManualInput(text);
-    if (text.length >= 8 && text.length <=13) {
-      handleNavigate(text);
+    if (text.length <= 13) setManualInput(text);
+  };
+
+  const handleManualSubmit = () => {
+    if (manualInput.trim().length === 0) {
+      alert('Unesi barkod.');
+      return;
     }
+
+    handleNavigate(manualInput.trim());
   };
 
   if (!permission) {
@@ -140,7 +168,11 @@ export default function ScanScreen() {
               onChangeText={handleManualChange}
               style={styles.input}
             />
-            <Text style={styles.note}>Barkod mora sadržavati najmanje 8 znamenki</Text>
+            <Text style={styles.note}>Barkod može imati najviše 13 znamenki</Text>
+
+            <TouchableOpacity style={styles.button} onPress={handleManualSubmit}>
+              <Text style={styles.buttonText}>Pretraži proizvod</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -213,6 +245,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#555',
     marginTop: 6,
+    marginBottom: 12,
+  },
+  button: {
+    backgroundColor: '#ff7f00',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
